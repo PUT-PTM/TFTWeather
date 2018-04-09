@@ -1,31 +1,25 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DHT11_H
-#define __DHT11_H
+/*
+ * dht11.h
+ *
+ *  Created on: 09.04.2018
+ *      Author: Artur
+ */
 
-/* Includes ------------------------------------------------------------------*/
-#include "utils.h"
-#include "pin.h"
-#include "tim.h"
+#ifndef DHT11_H_
+#define DHT11_H_
+#include "stm32f4xx.h"
+#include "stm32f4xx_gpio.h"
+#include "stm32f4xx_rcc.h"
+#include "stm32f4xx_tim.h"
+#include "stm32f4xx_usart.h"
+#include "misc.h"
+#include "stdio.h"
+#include "math.h"
 
-/* Exported constants --------------------------------------------------------*/
-#define MAX_TICS 10000
-#define DHT11_OK 0
-#define DHT11_NO_CONN 1
-#define DHT11_CS_ERROR 2
-#define DHT11_PORT GPIOA
-#define DHT11_PIN GPIO_Pin_5
+void DHT11Read(u8 *Rh,u8 *RhDec,u8 *Temp,u8 *TempDec, u8 *ChkSum);
+void DHT11_delay_us(int us);
+void DHT11initGPIOasInput(void);
+void DHT11initGPIOasOutput(void);
+void DHT11initTIM2(void);
 
-//#define DHT11_PORT GPIOC
-//#define DHT11_PIN GPIO_Pin_2
-
-/* Exported macro ------------------------------------------------------------*/
-
-/* Exported functions ------------------------------------------------------- */
-uint8_t DHT11_RawRead(uint8_t *buf);
-float DHT22_Humidity(uint8_t *buf);
-float DHT22_Temperature(uint8_t *buf);
-uint8_t DHT11_Humidity(uint8_t *buf);
-uint8_t DHT11_Temperature(uint8_t *buf);
-uint8_t DHT11_pwm_Read(uint8_t *buf, uint32_t *dt, uint32_t *cnt);
-
-#endif /* __DHT11_H */
+#endif /* DHT11_H_ */

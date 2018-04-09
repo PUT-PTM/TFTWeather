@@ -1,159 +1,110 @@
+/*
+ * dht11.c
+
+ *
+ *  Created on: 09.04.2018
+ *      Author: Artur
+ */
+
 #include "dht11.h"
 #include "stm32f4xx.h"
-#include "stm32f4_discovery.h"
-uint16_t read_cycle(uint16_t cur_tics, uint8_t neg_tic){
-	uint16_t cnt_tics;
- 	if (cur_tics < MAX_TICS) cnt_tics = 0;
-	if (neg_tic){
-		while (!GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN)&&(cnt_tics<MAX_TICS)){
-			cnt_tics++;
-		}
-	}
-	else {
-		while (GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN)&&(cnt_tics<MAX_TICS)){
-			cnt_tics++;
-		}
-	}
- 	return cnt_tics;
+#include "stm32f4xx_gpio.h"
+#include "stm32f4xx_rcc.h"
+#include "stm32f4xx_tim.h"
+#include "stm32f4xx_usart.h"
+#include "misc.h"
+#include "stdio.h"
+#include "math.h"
+
+
+GPIO_InitTypeDef  GPIO_InitStructure;
+TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+
+void DHT11initTIM2(void){
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	TIM_TimeBaseStructure.TIM_Period = 84000000-1;//1us
+	TIM_TimeBaseStructure.TIM_Prescaler =84;		//1us counter
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+	TIM_Cmd(TIM2, ENABLE);
 }
 
-uint8_t DHT11_RawRead(uint8_t *buf){
-  GPIO_InitTypeDef GPIO_InitStructure;
-	uint16_t dt[42];
-	uint16_t cnt;
-	uint8_t i, check_sum;
+void DHT11initGPIOasOutput(void){
 
-  GPIO_InitStructure.GPIO_Pin = DHT11_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_Init(DHT11_PORT, &GPIO_InitStructure);
-	pin_mode(DHT11_PORT, DHT11_PIN, GPIO_MODE_OUT2_PP);
+	 /* GPIOD Periph clock enable */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
+	/* Configure PD12, PD13, PD14 and PD15 in output pushpull mode */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-	//reset DHT11
-	Delay(500);
- 	GPIO_LOW(DHT11_PORT,DHT11_PIN);
-	Delay(20);
- 	GPIO_HIGH(DHT11_PORT,DHT11_PIN);
-
-//  GPIO_InitStructure.GPIO_Pin = DHT11_PIN;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
-//  GPIO_Init(DHT11_PORT, &GPIO_InitStructure);
-	pin_mode(DHT11_PORT, DHT11_PIN, GPIO_MODE_IN);
-
-  //start reading
- 	cnt = 0;
-	for(i=0;i<83 && cnt<MAX_TICS;i++){
-		if (i & 1){
-			cnt = read_cycle(cnt, 1);
-		}
-		else {
-			cnt = read_cycle(cnt, 0);
-			dt[i/2]= cnt;
-		}
-	}
-
- 	//release line
-	GPIO_HIGH(DHT11_PORT, DHT11_PIN);
-
-	for (i = 0; i<5; i++) buf[i]=0;
-
-	if (cnt>=MAX_TICS) return DHT11_NO_CONN;
-
-	//convert data
- 	for(i=2;i<42;i++){
-		(*buf) <<= 1;
-  	if (dt[i]>20) {
-			(*buf)++;
- 		}
-		if (!((i-1)%8) && (i>2)) {
-			buf++;
-		}
- 	}
-
-	//calculate checksum
-	buf -= 5;
-	check_sum = 0;
- 	for(i=0;i<4;i++){
-		check_sum += *buf;
-		buf++;
-	}
-
-	if (*buf != check_sum) return DHT11_CS_ERROR;
-
-	return DHT11_OK;
-	//return check_sum;
-}
-
-uint8_t DHT11_pwm_Read(uint8_t *buf, uint32_t *dt, uint32_t *cnt){
-	uint8_t i, check_sum;
-
-	*cnt = 0;
-	for (i = 0; i<43; i++) dt[i]=0;
-
-	pin_mode(DHT11_PORT, DHT11_PIN, GPIO_MODE_OUT2_PP);
-
-	GPIO_LOW(DHT11_PORT,	DHT11_PIN);
-	Delay(20);
-	GPIO_HIGH(DHT11_PORT,	DHT11_PIN);
-	tim_init_pwm_cnt(DHT11_PORT,	DHT11_PIN);
-	Delay(20);
-
-	//pin_mode(TIM2_GPIO, TIM2_CH1, GPIO_MODE_OUT2_PP);
-	//GPIO_HIGH(TIM2_GPIO,	TIM2_CH1);
-
-	for (i = 0; i<5; i++) buf[i]=0;
-
-	if (*cnt==0) return DHT11_NO_CONN;
-
-	//convert data
- 	for(i=3;i<42;i++){
-		(*buf) <<= 1;
-  	if (dt[i]>2000) {
-			(*buf)++;
- 		}
-		if (!((i-2)%8) && (i>3)) {
-			buf++;
-		}
- 	}
-
-	//calculate checksum
-	buf -= 5;
-	check_sum = 0;
- 	for(i=0;i<4;i++){
-		check_sum += *buf;
-		buf++;
-	}
-
-	if (*buf != check_sum) return DHT11_CS_ERROR;
-
-	return DHT11_OK;
-	//return check_sum;
 }
 
 
-float DHT22_Humidity(uint8_t *buf){
-	float res;
-	res = buf[0] * 256 + buf[1];
-	res /= 10.0;
-	return res;
+void DHT11initGPIOasInput(void){
+
+	 /* GPIOD Periph clock enable */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+
 }
 
-float DHT22_Temperature(uint8_t *buf){
-	float res;
-	res = (buf[2] & 0x7F)* 256 + buf[3];
-  res /= 10.0;
-  if (buf[2] & 0x80) res *= -1;
-	return res;
+
+void DHT11_delay_us(int us){
+
+	TIM2->CNT = 0;
+	while((TIM2->CNT) <= us);
 }
 
-uint8_t DHT11_Humidity(uint8_t *buf){
-	return buf[0];
-}
 
-uint8_t DHT11_Temperature(uint8_t *buf){
-	return buf[2];;
+
+void DHT11Read(u8 *Rh,u8 *RhDec,u8 *Temp,u8 *TempDec, u8 *ChkSum){
+
+			u8 temp;
+			u8 j;
+			u8 i;
+			u8 Value[5]={0x00,0x00,0x00,0x00,0x00};
+
+			DHT11initGPIOasOutput();
+			GPIO_ResetBits(GPIOD,GPIO_Pin_1);
+			DHT11_delay_us(18000);
+			GPIO_SetBits(GPIOD,GPIO_Pin_1);
+			DHT11_delay_us(40);
+			DHT11initGPIOasInput();
+
+			while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)){}
+
+			while(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)){}
+
+
+			for (j = 0; j < 5; ++j) {
+				for (i = 0; i < 8; ++i) {
+
+					while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)){}
+
+					TIM_SetCounter(TIM2,0);
+					while(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)){}
+
+						temp=TIM_GetCounter(TIM2);
+					if (temp<30) {
+						Value[j]=Value[j]<<1;
+						}
+					else {
+						Value[j]=Value[j]<<1;
+						Value[j] =Value[j]+1;
+						}
+				}
+			}
+    		*Rh=Value[0];
+    		*RhDec=Value[1];
+    		*Temp=Value[2];
+    		*TempDec=Value[3];
+    		*ChkSum=Value[4];
 }
