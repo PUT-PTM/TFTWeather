@@ -20,6 +20,6 @@ void DHT11Read(u8 *Rh,u8 *RhDec,u8 *Temp,u8 *TempDec, u8 *ChkSum);
 void DHT11_delay_us(int us);
 void DHT11initGPIOasInput(void);
 void DHT11initGPIOasOutput(void);
-void DHT11initTIM2(void);
+void DHT11initTIM4(void);
 
 #endif /* DHT11_H_ */

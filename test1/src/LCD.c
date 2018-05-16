@@ -1,4 +1,5 @@
 #include "LCD.h"
+#include "AsciiLib.h"
 
 uint16_t test;
 /* Command writing function
@@ -296,5 +297,196 @@ LCD_WriteData(Color);
 Set_Cs;
 }
 
+void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor )
+{
+	uint16_t i, j;
+    uint8_t buffer[16], tmp_char;
+    GetASCIICode(buffer,ASCI);
+    for( i=0; i<16; i++ )
+    {
+        tmp_char = buffer[i];
+        for( j=0; j<8; j++ )
+        {
+            if( (tmp_char >> 7 - j) & 0x01 == 0x01 )
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, charColor );
+            }
+            else
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, bkColor );
+            }
+        }
+    }
+}
 
+void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor)
+{
+    uint8_t TempChar;
+    do
+    {
+        TempChar = *str++;
+        PutChar( Xpos, Ypos, TempChar, Color, bkColor );
+        if( Xpos < MAX_X - 8 )
+        {
+            Xpos += 8;
+        }
+        else if ( Ypos < MAX_Y - 16 )
+        {
+            Xpos = 0;
+            Ypos += 16;
+        }
+        else
+        {
+            Xpos = 0;
+            Ypos = 0;
+        }
+    }
+    while ( *str != 0 );
+}
+
+void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color )
+{
+  short dx,dy;
+  short temp;
+
+  if( x0 > x1 )
+  {
+    temp = x1;
+    x1 = x0;
+    x0 = temp;
+  }
+  if( y0 > y1 )
+  {
+    temp = y1;
+    y1 = y0;
+    y0 = temp;
+  }
+
+  dx = x1-x0;
+  dy = y1-y0;
+
+  if( dx == 0 )
+  {
+    do
+    {
+      LCD_SetPoint(x0, y0, color);
+      y0++;
+    }
+    while( y1 >= y0 );
+    return;
+  }
+  if( dy == 0 )
+  {
+    do
+    {
+      LCD_SetPoint(x0, y0, color);
+      x0++;
+    }
+    while( x1 >= x0 );
+		return;
+  }
+
+	/* Bresenham's line algorithm  */
+  if( dx > dy )
+  {
+    temp = 2 * dy - dx;
+    while( x0 != x1 )
+    {
+	    LCD_SetPoint(x0,y0,color);
+	    x0++;
+	    if( temp > 0 )
+	    {
+	      y0++;
+	      temp += 2 * dy - 2 * dx;
+	 	  }
+      else
+      {
+			  temp += 2 * dy;
+			}
+    }
+    LCD_SetPoint(x0,y0,color);
+  }
+  else
+  {
+    temp = 2 * dx - dy;
+    while( y0 != y1 )
+    {
+	 	  LCD_SetPoint(x0,y0,color);
+      y0++;
+      if( temp > 0 )
+      {
+        x0++;
+        temp+=2*dy-2*dx;
+      }
+      else
+			{
+        temp += 2 * dy;
+			}
+    }
+    LCD_SetPoint(x0,y0,color);
+	}
+}
+
+static uint16_t LCD_BGR2RGB(uint16_t color)
+{
+	uint16_t  r, g, b, rgb;
+
+	b = ( color>>0 )  & 0x1f;
+	g = ( color>>5 )  & 0x3f;
+	r = ( color>>11 ) & 0x1f;
+
+	rgb =  (b<<11) + (g<<5) + (r<<0);
+
+	return( rgb );
+}
+
+void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point)
+{
+	if( Xpos >= MAX_X || Ypos >= MAX_Y )
+	{
+		return;
+	}
+	LCD_SetCursor(Xpos,Ypos);
+	LCD_WriteReg(0x0022,point);
+}
+
+
+//
+//uint16_t LCD_GetPoint(uint16_t Xpos,uint16_t Ypos)
+//{
+//	uint16_t dummy;
+//
+//	LCD_SetCursor(Xpos,Ypos);
+//	Clr_Cs;
+//	LCD_WriteIndex(0x0022);
+//
+//	switch( LCD_Code )
+//	{
+//		case ST7781:
+//		case LGDP4531:
+//		case LGDP4535:
+//		case SSD1289:
+//		case SSD1298:
+//      dummy = LCD_ReadData();
+//      dummy = LCD_ReadData();
+//      Set_Cs;
+// 		  return  dummy;
+//    case HX8347A:
+//	  case HX8347D:
+//    {
+//      uint8_t red,green,blue;
+//      red = LCD_ReadData()>>3;
+//      green = LCD_ReadData()>>3;
+//      blue = LCD_ReadData()>>2;
+//      dummy = ( green << 11 ) | (blue << 5 ) | red;
+//		}
+//      Set_Cs;
+//      return  dummy;
+//    default:	/* 0x9320 0x9325 0x9328 0x9331 0x5408 0x1505 0x0505 0x9919 */
+//      dummy = LCD_ReadData();
+//      dummy = LCD_ReadData();
+//      Set_Cs;
+//      return  LCD_BGR2RGB( dummy );
+//	}
+//}
 

@@ -1,6 +1,5 @@
-StdPeriph_Driver/src/stm32f4xx_cryp_des.o: \
- ../StdPeriph_Driver/src/stm32f4xx_cryp_des.c \
- C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_cryp.h \
+src/dht11.o: ../src/dht11.c \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/inc/dht11.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/CMSIS/device/stm32f4xx.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/CMSIS/core/core_cm4.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/CMSIS/core/core_cmInstr.h \
@@ -33,9 +32,14 @@ StdPeriph_Driver/src/stm32f4xx_cryp_des.o: \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_tim.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_usart.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_wwdg.h \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/misc.h \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_gpio.h \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_rcc.h \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_tim.h \
+ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_usart.h \
  C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/misc.h
 
-C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_cryp.h:
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/inc/dht11.h:
 
 C:/Users/Artur/Documents/GitHub/TFTWeather/test1/CMSIS/device/stm32f4xx.h:
 
@@ -100,5 +104,15 @@ C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_
 C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_usart.h:
 
 C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_wwdg.h:
+
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/misc.h:
+
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_gpio.h:
+
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_rcc.h:
+
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_tim.h:
+
+C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/stm32f4xx_usart.h:
 
 C:/Users/Artur/Documents/GitHub/TFTWeather/test1/StdPeriph_Driver/inc/misc.h:

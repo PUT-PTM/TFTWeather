@@ -32,10 +32,10 @@ endif
 all: test1.elf
 
 # Tool invocations
-test1.elf: $(OBJS) $(USER_OBJS) C:\Users\Artur\workspace1\test1\LinkerScript.ld
+test1.elf: $(OBJS) $(USER_OBJS) C:\Users\Artur\Documents\GitHub\TFTWeather\test1\LinkerScript.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\Users\Artur\workspace1\test1\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "test1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\Users\Artur\Documents\GitHub\TFTWeather\test1\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "test1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

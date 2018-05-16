@@ -17,6 +17,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <math.h>
+#include "AsciiLib.h"
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 /* Private define ------------------------------------------------------------*/

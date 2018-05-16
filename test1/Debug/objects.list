@@ -34,6 +34,7 @@
 "src/AsciiLib.o"
 "src/LCD.o"
 "src/TouchPanel.o"
+"src/dht11.o"
 "src/main.o"
 "src/syscalls.o"
 "src/system_stm32f4xx.o"

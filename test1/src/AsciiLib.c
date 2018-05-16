@@ -4,6 +4,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 
+
 #ifdef ASCII_8X16_MS_Gothic
 static unsigned char const AsciiLib[95][16] = {
 

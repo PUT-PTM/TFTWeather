@@ -12,31 +12,36 @@
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 #include "LCD.h"
+#include "dht11.h"
+#define MAX_STRLEN 12
+volatile char received_string[MAX_STRLEN+1]; // this will hold the recieved string
 
-int i;
+uint8_t *Rh,*RhDec,*Temp,*TempDec,*ChkSum;
+
 int main(void)
 {
-	//Delay and initialize your system
+
+	DHT11initTIM4();
+	char str[20];
 	LCD_Initializtion();
-	//LCD	 initialization
-	//LCD touch panel initializaion
-	//Clear the LCD with filled with red.
-	//You can fill functions to calibrate touch screen.
-	/* Infinite loop */
+	LCD_Clear(White);
+	GUI_Text(40,50,"TFTWHEATHER",Black,White);
+
+	delay_ms(10000);
 	while (1)
 	{
-		//You can fill functions to show touch coordinate on the LCD.
-		LCD_Clear(Magenta);
-		delay_ms(1000);
-		LCD_Clear(Red);
-		delay_ms(1000);
-		LCD_Clear(Cyan);
-		delay_ms(1000);
-		LCD_Clear(Green);
-		delay_ms(1000);
-		LCD_Clear(Blue);
-		delay_ms(1000);
-		LCD_Clear(Blue2);
+		DHT11Read(&Rh,&RhDec,&Temp,&TempDec,&ChkSum);
+		LCD_Clear(White);
+			GUI_Text(20,20,"Temperature: ",Black,White);
+			GUI_Text(20,40,Temp,Black,White);
+
+			GUI_Text(20,80,"Humidty: ",Black,White);
+			//GUI_Text(20,100,Rh,Black,White);
+
+
+
+		DHT11_delay_us(5);
+
 	}
 }
 
