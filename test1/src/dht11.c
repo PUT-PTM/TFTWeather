@@ -15,6 +15,7 @@
 #include "misc.h"
 #include "stdio.h"
 #include "math.h"
+#include "LCD.h"
 
 
 GPIO_InitTypeDef  GPIO_InitStructure;
@@ -102,6 +103,10 @@ void DHT11Read(u8 *Rh,u8 *RhDec,u8 *Temp,u8 *TempDec, u8 *ChkSum){
 						}
 				}
 			}
+
+
+
+
     		*Rh=Value[0];
     		*RhDec=Value[1];
     		*Temp=Value[2];

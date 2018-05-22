@@ -17,26 +17,39 @@
 volatile char received_string[MAX_STRLEN+1]; // this will hold the recieved string
 
 uint8_t *Rh,*RhDec,*Temp,*TempDec,*ChkSum;
-
+char str[3];
+char str1[3];
+int k;
+int h;
 int main(void)
 {
 
 	DHT11initTIM4();
-	char str[20];
 	LCD_Initializtion();
 	LCD_Clear(White);
 	GUI_Text(40,50,"TFTWHEATHER",Black,White);
-
 	delay_ms(10000);
+
 	while (1)
 	{
 		DHT11Read(&Rh,&RhDec,&Temp,&TempDec,&ChkSum);
 		LCD_Clear(White);
-			GUI_Text(20,20,"Temperature: ",Black,White);
-			GUI_Text(20,40,Temp,Black,White);
+		k = Temp;
+		str[0] = (k/10)+'0';
+		str[1] = (k%10)+'0';
 
-			GUI_Text(20,80,"Humidty: ",Black,White);
-			//GUI_Text(20,100,Rh,Black,White);
+		GUI_Text(20,20,"Temperature: ",Black,White);
+		GUI_Text(20,40, str ,Black,White);
+
+		h=Rh;
+		str1[0] = (h/10)+'0';
+		str1[1] = (h%10)+'0';
+
+		GUI_Text(20,80,"Humidty: ",Black,White);
+		GUI_Text(20,100,str1,Black,White);
+
+		GUI_Text(180,200,"Pozdrawiamy ",Magenta,White);
+
 
 
 
