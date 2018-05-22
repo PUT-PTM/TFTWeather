@@ -48,11 +48,6 @@ int main(void)
 		GUI_Text(20,80,"Humidty: ",Black,White);
 		GUI_Text(20,100,str1,Black,White);
 
-		GUI_Text(180,200,"Pozdrawiamy ",Magenta,White);
-
-
-
-
 		DHT11_delay_us(5);
 
 	}
