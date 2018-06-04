@@ -27,7 +27,6 @@ Let your compiler do the work, there is nothing more to it.
 
 We've specified a list, that we'll be trying to fullfill. Even though the project is complete, there is still more to do with our equipment.
 TODO:
-- touch panel control,
 - gathering pressure data from BMP280.
 
 ## Attributions :game_die:
