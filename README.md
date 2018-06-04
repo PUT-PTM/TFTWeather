@@ -13,7 +13,7 @@ TFTWeather is an university project made by Artur Bronka and Lukasz Dobek - stud
 
 ## Tools :cyclone:
 
-To make it all happen, we've used STM32F4 Discovery board, 3,2 inch TFT display, DHT11 and C programming skills. We've been writing our code in System Workbench which let's us compile the code easily, and send it to the microcontroller even easier.
+To make it all happen, we've used STM32F4 Discovery board, 3,2 inch TFT display with touch panel, DHT11 and C programming skills. We've been writing our code in System Workbench which let's us compile the code easily, and send it to the microcontroller even easier.
 
 ## How to run :cloud:
 
